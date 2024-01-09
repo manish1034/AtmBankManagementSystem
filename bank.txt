@@ -1,4 +1,4 @@
  manish1034 manish harish inida 234567 123456 1234567890 10980
  panda1034 panda manish india 1234567 123456 1234567890 7020
- manish manish harish india 123456 123456 1234567890 7500
+ manish manish harish india 123456 123456 1234567890 7000
  panda panda manish india 123456 123456 1234567890 0

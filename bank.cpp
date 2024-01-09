@@ -19,7 +19,10 @@ class bank{
         void deposit();
         void withdraw();
         void transfer();
+        void payment();
+        void search();
 };
+
     void bank::menu(){
         p:
         system("cls");
@@ -106,8 +109,10 @@ class bank{
             transfer();
             break;
         case 6:
+            payment();
             break;
         case 7:
+            search();
             break;
         case 8:
             break;
@@ -364,6 +369,83 @@ class bank{
 
             }else{
                 cout<<"\n\n\t\t\tBoth Transaction User ID's & Balance Invalid!!!";
+            }
+        }
+    }
+
+    void bank::payment(){
+        system("cls");
+        fstream file,file1;
+        int found=0;
+        float amount;
+        string b_name,t_id;
+        SYSTEMTIME x;
+        cout<<"\n\n\t\t\tBills Payment Option";
+        file.open("bank.txt",ios::in);
+        if(!file){
+            cout<<"\n\n File Opening Error...";
+        }else{
+            cout<<"\n\n User ID : ";
+            cin>>t_id;
+            cout<<"\n\n Bill Name : ";
+            cin>>b_name;
+            cout<<"\n\n Bill Amount : ";
+            cin>>amount;
+            file1.open("bank1.txt",ios::app|ios::out);
+            file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            while (!file.eof()){
+                if(t_id == id && amount <= balance){
+                    balance -= amount;
+                    file1<<" "<<id<<" "<<name<<" "<<fname<<" "<<address<<" "<<pin<<" "<<pass<<" "<<phone<<" "<<balance<<"\n";
+                    found++;
+                }else{
+                    file1<<" "<<id<<" "<<name<<" "<<fname<<" "<<address<<" "<<pin<<" "<<pass<<" "<<phone<<" "<<balance<<"\n";
+                }
+                file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            } 
+            file.close();
+            file1.close();
+            remove("bank.txt");
+            rename("bank1.txt","bank.txt");
+            if(found == 1){
+                GetSystemTime(&x);
+                file.open("bill.txt",ios::app|ios::out);
+                file<<t_id<<" "<<b_name<<" "<<amount<<" "<<x.wDay<<"/"<<x.wMonth<<"/"<<x.wYear<<"\n";
+                file.close();
+                cout<<"\n\n\t\t\t"<<b_name<<" Bill Paid Sucessfully...";
+            }else{
+                cout<<"\n\n\t\t\tUser ID or Amount Invalid...";
+            }
+        }
+    }
+
+    void bank::search(){
+        system("cls");
+        fstream file;
+        int found=0;
+        string t_id;
+        cout<<"\n\n\t\t\tSearch User Record";
+        file.open("bank.txt",ios::in);
+        if(!file){
+            cout<<"\n\n File Opening Error...";
+        }else{
+            cout<<"\n\n User ID : ";
+            cin>>t_id;
+            file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            while(!file.eof()){
+                if(t_id == id){
+                    system("cls");
+                    cout<<"\n\n\t\t\tSearch User Record";
+                    cout<<"\n\n\n User ID : "<<id<<"    Name : "<<name<<"\n Father's Name : "<<fname;
+                    cout<<"    Address : "<<address<<"\n Pin : "<<pin<<"    Password : "<<pass;
+                    cout<<"\n Phone : "<<phone<<"    Current Balance : "<<balance;
+                    found++;
+                }
+                file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            }
+            file.close();
+            if(found == 0){
+                cout<<"\n\n User ID Can't Found!!!";
             }
         }
     }
