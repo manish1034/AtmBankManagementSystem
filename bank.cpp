@@ -7,9 +7,8 @@ using namespace std;
 
 class bank{
     private:
-        int pin;
         float balance;
-        string id,pass,name,fname,address,phone;
+        string id,pass,name,fname,address,phone,pin;
     public:
         void menu();
         void bank_management();
@@ -25,6 +24,9 @@ class bank{
         void del();
         void show_records();
         void show_payment();
+        void user_balance();
+        void withdraw_atm();
+        void check_details();
 };
 
     void bank::menu(){
@@ -153,10 +155,13 @@ class bank{
         switch (choice)
         {
         case 1:
+            user_balance();
             break;
         case 2:
+            withdraw_atm();
             break;
         case 3:
+            check_details();
             break;
         case 4:
             menu();
@@ -171,9 +176,8 @@ class bank{
         p:
         system("cls");
         fstream file;
-        int p;
         float b;
-        string n,f,pa,a,ph,i;
+        string n,f,p,pa,a,ph,i;
         cout<<"\n\n\t\t\tAdd New User";
         cout<<"\n\n User ID : ";
         cin>>id;
@@ -185,7 +189,7 @@ class bank{
         cin>>address;
         cout<<"\n\n Pin code (6 digit) : ";
         cin>>pin;
-        cout<<"\n\n\t\tPassword : ";
+        cout<<"\n\n\t\tPassword (6 digit) : ";
         cin>>pass;
         cout<<"\n\n Phone No. : ";
         cin>>phone;
@@ -461,8 +465,8 @@ class bank{
     void bank::edit(){
         system("cls");
         fstream file,file1;
-        int found=0,pi;
-        string t_id,n,f,a,p,ph;
+        int found=0;
+        string t_id,n,f,a,p,pi,ph;
         cout<<"\n\n\t\t\tEdit User Record";
         file.open("bank.txt",ios::in);
         if(!file){
@@ -482,7 +486,7 @@ class bank{
                     cin>>a;
                     cout<<"\n\n Pin code (6 digit) : ";
                     cin>>pi;
-                    cout<<"\n\n\t\tPassword : ";
+                    cout<<"\n\n\t\tPassword (6 digit): ";
                     cin>>p;
                     cout<<"\n\n Phone No. : ";
                     cin>>ph;
@@ -549,13 +553,13 @@ class bank{
             file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
             while(!file.eof()){
                 cout<<"\n\n\n User ID : "<<id;
-                cout<<"\n\n\n Name : "<<name;
-                cout<<"\n\n\n F'Name : "<<fname;
-                cout<<"\n\n\n address : "<<address;
-                cout<<"\n\n\n Pin : "<<pin;
-                cout<<"\n\n\n Password : "<<pass;
-                cout<<"\n\n\n Phone : "<<phone;
-                cout<<"\n\n\n Balance : "<<balance;
+                cout<<"\n Name : "<<name;
+                cout<<"\n F'Name : "<<fname;
+                cout<<"\n address : "<<address;
+                cout<<"\n Pin : "<<pin;
+                cout<<"\n Password : "<<pass;
+                cout<<"\n Phone : "<<phone;
+                cout<<"\n Balance : "<<balance;
                 cout<<"\n\n==================================";
                 file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
                 found++;
@@ -592,6 +596,151 @@ class bank{
             if(found == 0){
                 cout<<"\n\n Data Base is Empty!!!";
             }
+        }
+    }
+
+    void bank::user_balance(){
+        system("cls");
+        fstream file;
+        int found=0;
+        string t_id,t_pin,t_pass;
+        char ch;
+        cout<<"\n\n\t\t\tUser Login & Check Balance";
+        file.open("bank.txt",ios::in);
+        if(!file){
+            cout<<"\n\n File Opening Error...";
+        }else{
+            cout<<"\n\n User ID : ";
+            cin>>t_id;
+            cout<<"\n\n\t\tPin Code : ";
+            for(int i=0; i<=5; i++){
+                ch = getch();
+                t_pin += ch;
+                cout<<"*";
+            }
+            cout<<"\n\nPassword : ";
+            for(int i=0; i<=5; i++){
+                ch = getch();
+                t_pass += ch;
+                cout<<"*";
+            }
+            file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            while(!file.eof()){
+                if(t_id == id && t_pin == pin && t_pass == pass){
+                    cout<<"\n\n\t\t\tYour Current Balance is : "<<balance;
+                    found++;
+                }
+                file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;  
+            }
+            file.close();
+            if(found=0){
+                cout<<"\n\n\t\t\tUser ID, Pin & Password Invalid...";
+            }
+        }
+    }
+
+    void bank::withdraw_atm(){
+        fstream file,file1;
+        system("cls");
+        int found=0;
+        float with;
+        string t_id,t_pass,t_pin;
+        char ch;
+        cout<<"\n\n\t\t\tDeposite Amount Option";
+        file.open("bank.txt",ios::in);
+        if(!file){
+            cout<<"\n\n File Opening Error...";
+        }else{
+            cout<<"\n\n User ID : ";
+            cin>>t_id;
+            cout<<"\n\n\t\tPin Code : ";
+            for(int i=0; i<=5; i++){
+                ch = getch();
+                t_pin += ch;
+                cout<<"*";
+            }
+            cout<<"\n\n Password : ";
+            for(int i=0; i<=5; i++){
+                ch = getch();
+                t_pass += ch;
+                cout<<"*";
+            }
+            file1.open("bank1.txt",ios::app|ios::out);
+            file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            while(!file.eof()){
+                if(t_id == id && t_pin == pin && t_pass == pass){
+                    cout<<"\n\n\t\tAmount For Withdraw : ";
+                    cin>>with;
+                    if(with <= balance){
+                        balance -= with;
+                        file1<<" "<<id<<" "<<name<<" "<<fname<<" "<<address<<" "<<pin<<" "<<pass<<" "<<phone<<" "<<balance<<"\n";
+                        cout<<"\n\n\t\t\tYour Amount "<<with<<" Has Been Successfully Withdrawed!!!";
+                        cout<<"\n\n\t\t\t   Your Current Amount is : "<<balance;
+                    }else{
+                        file1<<" "<<id<<" "<<name<<" "<<fname<<" "<<address<<" "<<pin<<" "<<pass<<" "<<phone<<" "<<balance<<"\n";
+                        cout<<"\n\n\t\t\tYour Current Balance "<<balance<<" is Less...";
+                    }
+                    found++;
+                }else{
+                    file1<<" "<<id<<" "<<name<<" "<<fname<<" "<<address<<" "<<pin<<" "<<pass<<" "<<phone<<" "<<balance<<"\n";
+                }
+                file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            }
+            file.close();
+            file1.close();
+            remove("bank.txt");
+            rename("bank1.txt","bank.txt");
+            if(found == 0){
+                cout<<"\n\n User ID Can't Found...";
+            } 
+        }
+    }
+
+    void bank::check_details(){
+        fstream file,file1;
+        system("cls");
+        int found=0;
+        float with;
+        string t_id,t_pass,t_pin;
+        char ch;
+        cout<<"\n\n\t\t\tDeposite Amount Option";
+        file.open("bank.txt",ios::in);
+        if(!file){
+            cout<<"\n\n File Opening Error...";
+        }else{
+            cout<<"\n\n User ID : ";
+            cin>>t_id;
+            cout<<"\n\n\t\tPin Code : ";
+            for(int i=0; i<=5; i++){
+                ch = getch();
+                t_pin += ch;
+                cout<<"*";
+            }
+            cout<<"\n\n Password : ";
+            for(int i=0; i<=5; i++){
+                ch = getch();
+                t_pass += ch;
+                cout<<"*";
+            }
+            file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            while(!file.eof()){
+                if(t_id == id && t_pin == pin && t_pass == pass){
+                    cout<<"\n\n\n User ID : "<<id;
+                    cout<<"\n Name : "<<name;
+                    cout<<"\n F'Name : "<<fname;
+                    cout<<"\n address : "<<address;
+                    cout<<"\n Pin : "<<pin;
+                    cout<<"\n Password : "<<pass;
+                    cout<<"\n Phone : "<<phone;
+                    cout<<"\n Balance : "<<balance;
+                    found++;
+                }
+                file>>id>>name>>fname>>address>>pin>>pass>>phone>>balance;
+            }
+            file.close();
+            if(found == 0){
+                cout<<"\n\n User ID Can't Found...";
+            } 
         }
     }
 

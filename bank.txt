@@ -1,3 +1,2 @@
- manish1034 manish harish inida 234567 123456 1234567890 10780
- panda1034 panda manish india 1234567 123456 1234567890 7020
- panda panda manish india 123456 123456 1234567890 0
+ m1 manishchandra harishchandra Samalkha,NewDelhi 123456 123456 0987654321 4900
+ p1 panda manish India 123456 123456 1234567890 2000
